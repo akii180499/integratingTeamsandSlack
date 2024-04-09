@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="47983b61-c2aa-4585-a177-f53b2ccc0ff2" >
+		<http:listener-connection host="0.0.0.0" port="8082" />
+	</http:listener-config>
+	<flow name="teams-flow" doc:id="e561e120-6ad9-4a24-ae9b-79525b8b2b26" >
+		<http:listener doc:name="Listener" doc:id="bcbf6082-fec4-458e-924b-ada9932362d0" config-ref="HTTP_Listener_config" path="/teams"/>
+		<ee:transform doc:name="Transform Message" doc:id="72356f83-28d1-4d56-910e-f2133527c7f1" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[output json
+---
+{
+    "@type": "MessageCard",
+    "@context": "http://schema.org/extensions",
+    "themeColor": "0076D7",
+    "summary": "Akshay Rane created a new task",
+    "sections": [{
+        "activityTitle": "Akshay Rane created a new task",
+        "activitySubtitle": "On Project Tango",
+        "activityImage": "https://adaptivecards.io/content/cats/3.png",
+        "facts": [{
+            "name": "Assigned to",
+            "value": "Unassigned"
+        }, {
+            "name": "Due date",
+            "value": "Mon May 01 2017 17:07:18 GMT-0700 (Pacific Daylight Time)"
+        }, {
+            "name": "Status",
+            "value": "Not started"
+        }],
+        "markdown": true
+    }],
+    "potentialAction": [{
+        "@type": "ActionCard",
+        "name": "Add a comment",
+        "inputs": [{
+            "@type": "TextInput",
+            "id": "comment",
+            "isMultiline": false,
+            "title": "Add a comment here for this task"
+        }],
+        "actions": [{
+            "@type": "HttpPOST",
+            "name": "Add comment",
+            "target": "https://learn.microsoft.com/outlook/actionable-messages"
+        }]
+    }, {
+        "@type": "ActionCard",
+        "name": "Set due date",
+        "inputs": [{
+            "@type": "DateInput",
+            "id": "dueDate",
+            "title": "Enter a due date for this task"
+        }],
+        "actions": [{
+            "@type": "HttpPOST",
+            "name": "Save",
+            "target": "https://learn.microsoft.com/outlook/actionable-messages"
+        }]
+    }, {
+        "@type": "OpenUri",
+        "name": "Learn More",
+        "targets": [{
+            "os": "default",
+            "uri": "https://learn.microsoft.com/outlook/actionable-messages"
+        }]
+    }, {
+        "@type": "ActionCard",
+        "name": "Change status",
+        "inputs": [{
+            "@type": "MultichoiceInput",
+            "id": "list",
+            "title": "Select a status",
+            "isMultiSelect": "false",
+            "choices": [{
+                "display": "In Progress",
+                "value": "1"
+            }, {
+                "display": "Active",
+                "value": "2"
+            }, {
+                "display": "Closed",
+                "value": "3"
+            }]
+        }],
+        "actions": [{
+            "@type": "HttpPOST",
+            "name": "Save",
+            "target": "https://learn.microsoft.com/outlook/actionable-messages"
+        }]
+    }]
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<http:request method="POST" doc:name="Request" doc:id="43d3c068-1e6e-4ec6-8270-03c93f8c2a6a" url='#["Enter your webhook url for teams. Steps to generate the webook url are mentioned inside blog provided in the readme file"]'/>
+	</flow>
+	<flow name="slack-flow" doc:id="daf2e6ab-e448-41b5-b7f7-c22330d76aa4">
+		<http:listener doc:name="Listener" doc:id="03422a83-f295-4238-a9f7-68920844243a" config-ref="HTTP_Listener_config" path="/slack" />
+		<set-payload value='#["This is a test payload"]' doc:name="Set Payload" doc:id="82ca55d4-8dc6-4d64-89e7-285128231457" />
+		<http:request method="POST" doc:name="Request" doc:id="3e6e61aa-509d-4561-9a4c-972d3f78ddaa" url='#["Enter your webhook url for slack. Steps to generate the webook url are mentioned inside blog provided in the readme file"]' >
+			<http:body ><![CDATA[#[output json
+---
+{
+	"text" : payload
+}]]]></http:body>
+		</http:request>
+	</flow>
+</mule>
