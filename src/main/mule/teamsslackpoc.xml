@@ -55,7 +55,7 @@ http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/
         "inputs": [{
             "@type": "DateInput",
             "id": "dueDate",
-            "title": "Enter a due date for this task"
+            "title":"
         }],
         "actions": [{
             "@type": "HttpPOST",
@@ -89,7 +89,7 @@ http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/
             }]
         }],
         "actions": [{
-            "@type": "HttpPOST",
+            "@type": "",
             "name": "Save",
             "target": "https://learn.microsoft.com/outlook/actionable-messages"
         }]
