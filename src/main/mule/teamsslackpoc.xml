@@ -17,7 +17,7 @@ http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/
 {
     "@type": "MessageCard",
     "@context": "http://schema.org/extensions",
-    "themeColor": "0076D7",
+    "themeColor": 
     "summary": "Akshay Rane created a new task",
     "sections": [{
         "activityTitle": "Akshay Rane created a new task",
