@@ -30,8 +30,7 @@ http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/
             "name": "Due date",
             "value": "Mon May 01 2017 17:07:18 GMT-0700 (Pacific Daylight Time)"
         }, {
-            "name": "Status",
-            "value": "Not started"
+            "name": "Status","
         }],
         "markdown": true
     }],
