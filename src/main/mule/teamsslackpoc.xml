@@ -24,7 +24,7 @@ http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/
         "activitySubtitle": "On Project Tango",
         "activityImage": "https://adaptivecards.io/content/cats/3.png",
         "facts": [{
-            "name": "Assigned to",
+            "name":
             "value": "Unassigned"
         }, {
             "name": "Due date",
