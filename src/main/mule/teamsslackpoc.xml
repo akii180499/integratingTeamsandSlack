@@ -18,7 +18,7 @@ http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/
     "@type": "MessageCard",
     "@context": "http://schema.org/extensions",
     "themeColor": "0076D7",
-    "summary": "Akshay Rane created a new task",
+    "summary": "Akshay Rane created a new tas",
     "sections": [{
         "activityTitle": "Akshay Rane created a new task",
         "activitySubtitle": "On Project Tango",
