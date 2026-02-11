@@ -103,7 +103,7 @@ http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/
 		<http:listener doc:name="Listener" doc:id="03422a83-f295-4238-a9f7-68920844243a" config-ref="HTTP_Listener_config" path="/slack" />
 		<set-payload value='#["This is a test payload"]' doc:name="Set Payload" doc:id="82ca55d4-8dc6-4d64-89e7-285128231457" />
 		<http:request method="POST" doc:name="Request" doc:id="3e6e61aa-509d-4561-9a4c-972d3f78ddaa" url='#["Enter your webhook url for slack. Steps to generate the webook url are mentioned inside blog provided in the readme file"]' >
-			<http:body ><![CDATA[#[output json
+			<http:body ><![CDATA[#[output 
 ---
 {
 	"text" : payload
