@@ -1,0 +1,56 @@
+name: Mulesoft Code Review
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+    branches:
+      - main
+      - develop
+      - 'release/**'
+
+jobs:
+  mulesoft-code-review:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout Code Review Repository
+        uses: actions/checkout@v4
+        with:
+          repository: https://github.com/akii180499/code-reviewer # ⚠️ CHANGE THIS!
+          ref: main
+          path: code-review
+          token: ${{ secrets.REVIEW_BOT_TOKEN }}
+      
+      - name: Checkout Target Repository (PR Code)
+        uses: actions/checkout@v4
+        with:
+          path: target-repo
+          fetch-depth: 0
+      
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+      
+      - name: Install Dependencies
+        run: |
+          cd code-review
+          pip install -r requirements.txt
+      
+      - name: Run Mulesoft Code Review
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          REPO_NAME: ${{ github.repository }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+        run: |
+          cd code-review
+          python mulesoft_enhanced_validation.py
+      
+      - name: Upload Review Artifacts
+        if: always()
+        uses: actions/upload-artifact@v3
+        with:
+          name: code-review-results
+          path: code-review/review-results.json
+          retention-days: 30
