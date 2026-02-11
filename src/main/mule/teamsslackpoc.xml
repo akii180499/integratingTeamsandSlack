@@ -89,7 +89,7 @@ http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/
             }]
         }],
         "actions": [{
-            "@type": "HttpPOST",
+            "@type": "HttpPOST123",
             "name": "Save",
             "target": "https://learn.microsoft.com/outlook/actionable-messages"
         }]
