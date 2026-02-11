@@ -19,7 +19,7 @@ jobs:
           repository: akii180499/code-reviewer # ⚠️ CHANGE THIS!
           ref: main
           path: code-review
-          token: ${{ secrets.REVIEW_BOT_TOKEN }}
+          token: ${{ secrets.PAT_TOKEN }}
       
       - name: Checkout Target Repository (PR Code)
         uses: actions/checkout@v4
@@ -39,7 +39,7 @@ jobs:
       
       - name: Run Mulesoft Code Review
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.PAT_TOKEN }}
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
           REPO_NAME: ${{ github.repository }}
           PR_NUMBER: ${{ github.event.pull_request.number }}
