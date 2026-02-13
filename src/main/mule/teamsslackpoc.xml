@@ -70,7 +70,7 @@ http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/
             "uri": "https://learn.microsoft.com/outlook/actionable-messages"
         }]
     }, {
-        "@type": "ActionCard",
+        "@type": "",
         "name": "Change status",
         "inputs": [{
             "@type": "MultichoiceInput",
