@@ -16,7 +16,7 @@ jobs:
       - name: Checkout Code Review Repository
         uses: actions/checkout@v4
         with:
-          repository: akii180499/code-reviewer # ⚠️ CHANGE THIS!
+          repository: akii180499/buddy-reviewer # ⚠️ CHANGE THIS!
           ref: main
           path: code-review
           token: ${{ secrets.PAT_TOKEN }}
