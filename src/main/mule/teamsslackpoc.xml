@@ -106,7 +106,7 @@ http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/
 			<http:body ><![CDATA[#[output json
 ---
 {
-	"text" : payload
+	"text" : payload1
 }]]]></http:body>
 		</http:request>
 	</flow>
