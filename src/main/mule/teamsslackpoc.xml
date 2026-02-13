@@ -50,7 +50,7 @@ http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/
             "target": "https://learn.microsoft.com/outlook/actionable-messages"
         }]
     }, {
-        "@type": "ActionCard",
+        "@type": "",
         "name": "Set due date",
         "inputs": [{
             "@type": "DateInput",
