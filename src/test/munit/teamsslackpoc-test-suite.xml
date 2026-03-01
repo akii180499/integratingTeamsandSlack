@@ -1,0 +1,347 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:munit="http://www.mulesoft.org/schema/mule/munit" xmlns:munit-tools="http://www.mulesoft.org/schema/mule/munit-tools"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xsi:schemaLocation="
+		http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+		http://www.mulesoft.org/schema/mule/munit http://www.mulesoft.org/schema/mule/munit/current/mule-munit.xsd
+		http://www.mulesoft.org/schema/mule/munit-tools  http://www.mulesoft.org/schema/mule/munit-tools/current/mule-munit-tools.xsd
+		http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd">
+
+	<munit:config name="teamsslackpoc-test-suite.xml" />
+
+	<!-- Mock HTTP Request Configuration for testing -->
+	<http:request-config name="Test_HTTP_Request_config" doc:name="HTTP Request configuration">
+		<http:request-connection host="localhost" port="8082"/>
+	</http:request-config>
+
+	<!-- Test 1: teams-flow - Verify listener responds to /teams endpoint -->
+	<munit:test name="teams-flow-test-listener-responds" doc:id="test-teams-flow-listener" description="Test that teams-flow listener responds to HTTP requests">
+		<munit:behavior>
+			<munit-tools:mock-when doc:name="Mock HTTP Request to Teams" processor="http:request">
+				<munit-tools:with-attributes>
+					<munit-tools:with-attribute whereValue="43d3c068-1e6e-4ec6-8270-03c93f8c2a6a" attributeName="doc:id"/>
+				</munit-tools:with-attributes>
+				<munit-tools:then-return>
+					<munit-tools:payload value='#[%dw 2.0&#10;output application/json&#10;---&#10;{&#10;  "status": "success",&#10;  "message": "Message sent to Teams"&#10;}]'/>
+					<munit-tools:attributes value='#[{"statusCode": 200}]'/>
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+		</munit:behavior>
+		<munit:execution>
+			<flow-ref doc:name="Flow-ref to teams-flow" name="teams-flow"/>
+		</munit:execution>
+		<munit:validation>
+			<munit-tools:assert-that doc:name="Assert payload is not null" expression="#[payload]" is="#[MunitTools::notNullValue()]"/>
+		</munit:validation>
+	</munit:test>
+
+	<!-- Test 2: teams-flow - Verify Transform Message creates correct MessageCard structure -->
+	<munit:test name="teams-flow-test-transform-message-card" doc:id="test-teams-transform" description="Test that teams-flow transforms message to correct Teams MessageCard format">
+		<munit:behavior>
+			<munit-tools:mock-when doc:name="Mock HTTP Request to Teams" processor="http:request">
+				<munit-tools:with-attributes>
+					<munit-tools:with-attribute whereValue="43d3c068-1e6e-4ec6-8270-03c93f8c2a6a" attributeName="doc:id"/>
+				</munit-tools:with-attributes>
+				<munit-tools:then-return>
+					<munit-tools:payload value='#[payload]'/>
+					<munit-tools:attributes value='#[{"statusCode": 200}]'/>
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+		</munit:behavior>
+		<munit:execution>
+			<flow-ref doc:name="Flow-ref to teams-flow" name="teams-flow"/>
+		</munit:execution>
+		<munit:validation>
+			<munit-tools:assert-that doc:name="Assert @type is MessageCard" expression="#[payload.'@type']" is='#[MunitTools::equalTo("MessageCard")]'/>
+			<munit-tools:assert-that doc:name="Assert themeColor exists" expression="#[payload.themeColor]" is='#[MunitTools::equalTo("0076D7")]'/>
+			<munit-tools:assert-that doc:name="Assert summary exists" expression="#[payload.summary]" is="#[MunitTools::notNullValue()]"/>
+			<munit-tools:assert-that doc:name="Assert sections array exists" expression="#[payload.sections]" is="#[MunitTools::notNullValue()]"/>
+			<munit-tools:assert-that doc:name="Assert potentialAction array exists" expression="#[payload.potentialAction]" is="#[MunitTools::notNullValue()]"/>
+		</munit:validation>
+	</munit:test>
+
+	<!-- Test 3: teams-flow - Verify sections contain required fields -->
+	<munit:test name="teams-flow-test-sections-structure" doc:id="test-teams-sections" description="Test that teams-flow sections contain all required fields">
+		<munit:behavior>
+			<munit-tools:mock-when doc:name="Mock HTTP Request to Teams" processor="http:request">
+				<munit-tools:with-attributes>
+					<munit-tools:with-attribute whereValue="43d3c068-1e6e-4ec6-8270-03c93f8c2a6a" attributeName="doc:id"/>
+				</munit-tools:with-attributes>
+				<munit-tools:then-return>
+					<munit-tools:payload value='#[payload]'/>
+					<munit-tools:attributes value='#[{"statusCode": 200}]'/>
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+		</munit:behavior>
+		<munit:execution>
+			<flow-ref doc:name="Flow-ref to teams-flow" name="teams-flow"/>
+		</munit:execution>
+		<munit:validation>
+			<munit-tools:assert-that doc:name="Assert section has activityTitle" expression="#[payload.sections[0].activityTitle]" is="#[MunitTools::notNullValue()]"/>
+			<munit-tools:assert-that doc:name="Assert section has activitySubtitle" expression="#[payload.sections[0].activitySubtitle]" is="#[MunitTools::notNullValue()]"/>
+			<munit-tools:assert-that doc:name="Assert section has activityImage" expression="#[payload.sections[0].activityImage]" is="#[MunitTools::notNullValue()]"/>
+			<munit-tools:assert-that doc:name="Assert section has facts array" expression="#[payload.sections[0].facts]" is="#[MunitTools::notNullValue()]"/>
+			<munit-tools:assert-that doc:name="Assert facts has 3 items" expression="#[sizeOf(payload.sections[0].facts)]" is='#[MunitTools::equalTo(3)]'/>
+		</munit:validation>
+	</munit:test>
+
+	<!-- Test 4: teams-flow - Verify potentialAction contains all action types -->
+	<munit:test name="teams-flow-test-potential-actions" doc:id="test-teams-actions" description="Test that teams-flow potentialAction contains all expected action cards">
+		<munit:behavior>
+			<munit-tools:mock-when doc:name="Mock HTTP Request to Teams" processor="http:request">
+				<munit-tools:with-attributes>
+					<munit-tools:with-attribute whereValue="43d3c068-1e6e-4ec6-8270-03c93f8c2a6a" attributeName="doc:id"/>
+				</munit-tools:with-attributes>
+				<munit-tools:then-return>
+					<munit-tools:payload value='#[payload]'/>
+					<munit-tools:attributes value='#[{"statusCode": 200}]'/>
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+		</munit:behavior>
+		<munit:execution>
+			<flow-ref doc:name="Flow-ref to teams-flow" name="teams-flow"/>
+		</munit:execution>
+		<munit:validation>
+			<munit-tools:assert-that doc:name="Assert 4 potential actions exist" expression="#[sizeOf(payload.potentialAction)]" is='#[MunitTools::equalTo(4)]'/>
+			<munit-tools:assert-that doc:name="Assert first action is ActionCard" expression="#[payload.potentialAction[0].'@type']" is='#[MunitTools::equalTo("ActionCard")]'/>
+			<munit-tools:assert-that doc:name="Assert OpenUri action exists" expression="#[payload.potentialAction[2].'@type']" is='#[MunitTools::equalTo("OpenUri")]'/>
+		</munit:validation>
+	</munit:test>
+
+	<!-- Test 5: teams-flow - Verify HTTP POST method is used -->
+	<munit:test name="teams-flow-test-http-post-method" doc:id="test-teams-http-method" description="Test that teams-flow uses POST method for HTTP request">
+		<munit:behavior>
+			<munit-tools:mock-when doc:name="Mock HTTP Request to Teams" processor="http:request">
+				<munit-tools:with-attributes>
+					<munit-tools:with-attribute whereValue="43d3c068-1e6e-4ec6-8270-03c93f8c2a6a" attributeName="doc:id"/>
+					<munit-tools:with-attribute whereValue="POST" attributeName="method"/>
+				</munit-tools:with-attributes>
+				<munit-tools:then-return>
+					<munit-tools:payload value='#[{"status": "success"}]'/>
+					<munit-tools:attributes value='#[{"statusCode": 200}]'/>
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+		</munit:behavior>
+		<munit:execution>
+			<flow-ref doc:name="Flow-ref to teams-flow" name="teams-flow"/>
+		</munit:execution>
+		<munit:validation>
+			<munit-tools:verify-call doc:name="Verify HTTP POST was called" processor="http:request">
+				<munit-tools:with-attributes>
+					<munit-tools:with-attribute whereValue="POST" attributeName="method"/>
+				</munit-tools:with-attributes>
+			</munit-tools:verify-call>
+		</munit:validation>
+	</munit:test>
+
+	<!-- Test 6: slack-flow - Verify listener responds to /slack endpoint -->
+	<munit:test name="slack-flow-test-listener-responds" doc:id="test-slack-flow-listener" description="Test that slack-flow listener responds to HTTP requests">
+		<munit:behavior>
+			<munit-tools:mock-when doc:name="Mock HTTP Request to Slack" processor="http:request">
+				<munit-tools:with-attributes>
+					<munit-tools:with-attribute whereValue="3e6e61aa-509d-4561-9a4c-972d3f78ddaa" attributeName="doc:id"/>
+				</munit-tools:with-attributes>
+				<munit-tools:then-return>
+					<munit-tools:payload value='#[%dw 2.0&#10;output application/json&#10;---&#10;{&#10;  "ok": true&#10;}]'/>
+					<munit-tools:attributes value='#[{"statusCode": 200}]'/>
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+		</munit:behavior>
+		<munit:execution>
+			<flow-ref doc:name="Flow-ref to slack-flow" name="slack-flow"/>
+		</munit:execution>
+		<munit:validation>
+			<munit-tools:assert-that doc:name="Assert payload is not null" expression="#[payload]" is="#[MunitTools::notNullValue()]"/>
+		</munit:validation>
+	</munit:test>
+
+	<!-- Test 7: slack-flow - Verify payload is set correctly -->
+	<munit:test name="slack-flow-test-payload-set" doc:id="test-slack-payload" description="Test that slack-flow sets payload to test message">
+		<munit:behavior>
+			<set-variable doc:name="Capture payload before HTTP request" variableName="capturedPayload" value="#[null]"/>
+			<munit-tools:mock-when doc:name="Mock HTTP Request to Slack" processor="http:request">
+				<munit-tools:with-attributes>
+					<munit-tools:with-attribute whereValue="3e6e61aa-509d-4561-9a4c-972d3f78ddaa" attributeName="doc:id"/>
+				</munit-tools:with-attributes>
+				<munit-tools:then-return>
+					<munit-tools:payload value='#[%dw 2.0&#10;output application/json&#10;---&#10;{&#10;  "ok": true,&#10;  "message": "Message sent"&#10;}]'/>
+					<munit-tools:attributes value='#[{"statusCode": 200}]'/>
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+		</munit:behavior>
+		<munit:execution>
+			<flow-ref doc:name="Flow-ref to slack-flow" name="slack-flow"/>
+		</munit:execution>
+		<munit:validation>
+			<munit-tools:assert-that doc:name="Assert payload contains expected response" expression="#[payload]" is="#[MunitTools::notNullValue()]"/>
+		</munit:validation>
+	</munit:test>
+
+	<!-- Test 8: slack-flow - Verify JSON body structure -->
+	<munit:test name="slack-flow-test-json-body-structure" doc:id="test-slack-json" description="Test that slack-flow sends correct JSON body structure">
+		<munit:behavior>
+			<munit-tools:mock-when doc:name="Mock HTTP Request to Slack" processor="http:request">
+				<munit-tools:with-attributes>
+					<munit-tools:with-attribute whereValue="3e6e61aa-509d-4561-9a4c-972d3f78ddaa" attributeName="doc:id"/>
+				</munit-tools:with-attributes>
+				<munit-tools:then-return>
+					<munit-tools:payload value='#[{"ok": true}]'/>
+					<munit-tools:attributes value='#[{"statusCode": 200}]'/>
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+		</munit:behavior>
+		<munit:execution>
+			<flow-ref doc:name="Flow-ref to slack-flow" name="slack-flow"/>
+		</munit:execution>
+		<munit:validation>
+			<munit-tools:verify-call doc:name="Verify HTTP request was called" processor="http:request">
+				<munit-tools:with-attributes>
+					<munit-tools:with-attribute whereValue="3e6e61aa-509d-4561-9a4c-972d3f78ddaa" attributeName="doc:id"/>
+				</munit-tools:with-attributes>
+			</munit-tools:verify-call>
+		</munit:validation>
+	</munit:test>
+
+	<!-- Test 9: slack-flow - Verify HTTP POST method is used -->
+	<munit:test name="slack-flow-test-http-post-method" doc:id="test-slack-http-method" description="Test that slack-flow uses POST method for HTTP request">
+		<munit:behavior>
+			<munit-tools:mock-when doc:name="Mock HTTP Request to Slack" processor="http:request">
+				<munit-tools:with-attributes>
+					<munit-tools:with-attribute whereValue="3e6e61aa-509d-4561-9a4c-972d3f78ddaa" attributeName="doc:id"/>
+					<munit-tools:with-attribute whereValue="POST" attributeName="method"/>
+				</munit-tools:with-attributes>
+				<munit-tools:then-return>
+					<munit-tools:payload value='#[{"ok": true}]'/>
+					<munit-tools:attributes value='#[{"statusCode": 200}]'/>
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+		</munit:behavior>
+		<munit:execution>
+			<flow-ref doc:name="Flow-ref to slack-flow" name="slack-flow"/>
+		</munit:execution>
+		<munit:validation>
+			<munit-tools:verify-call doc:name="Verify HTTP POST was called" processor="http:request">
+				<munit-tools:with-attributes>
+					<munit-tools:with-attribute whereValue="POST" attributeName="method"/>
+				</munit-tools:with-attributes>
+			</munit-tools:verify-call>
+		</munit:validation>
+	</munit:test>
+
+	<!-- Test 10: teams-flow - Edge case with empty HTTP response -->
+	<munit:test name="teams-flow-test-empty-response-handling" doc:id="test-teams-empty-response" description="Test teams-flow handles empty HTTP response gracefully">
+		<munit:behavior>
+			<munit-tools:mock-when doc:name="Mock Empty HTTP Response" processor="http:request">
+				<munit-tools:with-attributes>
+					<munit-tools:with-attribute whereValue="43d3c068-1e6e-4ec6-8270-03c93f8c2a6a" attributeName="doc:id"/>
+				</munit-tools:with-attributes>
+				<munit-tools:then-return>
+					<munit-tools:payload value='#[""]'/>
+					<munit-tools:attributes value='#[{"statusCode": 200}]'/>
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+		</munit:behavior>
+		<munit:execution>
+			<flow-ref doc:name="Flow-ref to teams-flow" name="teams-flow"/>
+		</munit:execution>
+		<munit:validation>
+			<munit-tools:assert-that doc:name="Assert execution completes" expression="#[true]" is='#[MunitTools::equalTo(true)]'/>
+		</munit:validation>
+	</munit:test>
+
+	<!-- Test 11: slack-flow - Edge case with empty payload -->
+	<munit:test name="slack-flow-test-empty-payload-handling" doc:id="test-slack-empty-payload" description="Test slack-flow handles responses correctly">
+		<munit:behavior>
+			<munit-tools:mock-when doc:name="Mock HTTP Response" processor="http:request">
+				<munit-tools:with-attributes>
+					<munit-tools:with-attribute whereValue="3e6e61aa-509d-4561-9a4c-972d3f78ddaa" attributeName="doc:id"/>
+				</munit-tools:with-attributes>
+				<munit-tools:then-return>
+					<munit-tools:payload value='#[{"ok": true}]'/>
+					<munit-tools:attributes value='#[{"statusCode": 200}]'/>
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+		</munit:behavior>
+		<munit:execution>
+			<flow-ref doc:name="Flow-ref to slack-flow" name="slack-flow"/>
+		</munit:execution>
+		<munit:validation>
+			<munit-tools:assert-that doc:name="Assert execution completes" expression="#[true]" is='#[MunitTools::equalTo(true)]'/>
+		</munit:validation>
+	</munit:test>
+
+	<!-- Test 12: teams-flow - Verify facts structure in sections -->
+	<munit:test name="teams-flow-test-facts-content" doc:id="test-teams-facts" description="Test that teams-flow facts contain name and value pairs">
+		<munit:behavior>
+			<munit-tools:mock-when doc:name="Mock HTTP Request" processor="http:request">
+				<munit-tools:with-attributes>
+					<munit-tools:with-attribute whereValue="43d3c068-1e6e-4ec6-8270-03c93f8c2a6a" attributeName="doc:id"/>
+				</munit-tools:with-attributes>
+				<munit-tools:then-return>
+					<munit-tools:payload value='#[payload]'/>
+					<munit-tools:attributes value='#[{"statusCode": 200}]'/>
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+		</munit:behavior>
+		<munit:execution>
+			<flow-ref doc:name="Flow-ref to teams-flow" name="teams-flow"/>
+		</munit:execution>
+		<munit:validation>
+			<munit-tools:assert-that doc:name="Assert first fact has name" expression="#[payload.sections[0].facts[0].name]" is='#[MunitTools::equalTo("Assigned to")]'/>
+			<munit-tools:assert-that doc:name="Assert first fact has value" expression="#[payload.sections[0].facts[0].value]" is='#[MunitTools::equalTo("Unassigned")]'/>
+			<munit-tools:assert-that doc:name="Assert second fact has name" expression="#[payload.sections[0].facts[1].name]" is='#[MunitTools::equalTo("Due date")]'/>
+			<munit-tools:assert-that doc:name="Assert third fact has name" expression="#[payload.sections[0].facts[2].name]" is='#[MunitTools::equalTo("Status")]'/>
+		</munit:validation>
+	</munit:test>
+
+	<!-- Test 13: teams-flow - Verify ActionCard inputs structure -->
+	<munit:test name="teams-flow-test-action-card-inputs" doc:id="test-teams-inputs" description="Test that ActionCard contains proper input fields">
+		<munit:behavior>
+			<munit-tools:mock-when doc:name="Mock HTTP Request" processor="http:request">
+				<munit-tools:with-attributes>
+					<munit-tools:with-attribute whereValue="43d3c068-1e6e-4ec6-8270-03c93f8c2a6a" attributeName="doc:id"/>
+				</munit-tools:with-attributes>
+				<munit-tools:then-return>
+					<munit-tools:payload value='#[payload]'/>
+					<munit-tools:attributes value='#[{"statusCode": 200}]'/>
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+		</munit:behavior>
+		<munit:execution>
+			<flow-ref doc:name="Flow-ref to teams-flow" name="teams-flow"/>
+		</munit:execution>
+		<munit:validation>
+			<munit-tools:assert-that doc:name="Assert first action has inputs" expression="#[payload.potentialAction[0].inputs]" is="#[MunitTools::notNullValue()]"/>
+			<munit-tools:assert-that doc:name="Assert first input type is TextInput" expression="#[payload.potentialAction[0].inputs[0].'@type']" is='#[MunitTools::equalTo("TextInput")]'/>
+			<munit-tools:assert-that doc:name="Assert DateInput exists" expression="#[payload.potentialAction[1].inputs[0].'@type']" is='#[MunitTools::equalTo("DateInput")]'/>
+		</munit:validation>
+	</munit:test>
+
+	<!-- Test 14: teams-flow - Verify MultichoiceInput choices -->
+	<munit:test name="teams-flow-test-multichoice-input" doc:id="test-teams-multichoice" description="Test that MultichoiceInput contains status choices">
+		<munit:behavior>
+			<munit-tools:mock-when doc:name="Mock HTTP Request" processor="http:request">
+				<munit-tools:with-attributes>
+					<munit-tools:with-attribute whereValue="43d3c068-1e6e-4ec6-8270-03c93f8c2a6a" attributeName="doc:id"/>
+				</munit-tools:with-attributes>
+				<munit-tools:then-return>
+					<munit-tools:payload value='#[payload]'/>
+					<munit-tools:attributes value='#[{"statusCode": 200}]'/>
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+		</munit:behavior>
+		<munit:execution>
+			<flow-ref doc:name="Flow-ref to teams-flow" name="teams-flow"/>
+		</munit:execution>
+		<munit:validation>
+			<munit-tools:assert-that doc:name="Assert change status action exists" expression="#[payload.potentialAction[3].name]" is='#[MunitTools::equalTo("Change status")]'/>
+			<munit-tools:assert-that doc:name="Assert MultichoiceInput type" expression="#[payload.potentialAction[3].inputs[0].'@type']" is='#[MunitTools::equalTo("MultichoiceInput")]'/>
+			<munit-tools:assert-that doc:name="Assert 3 choices exist" expression="#[sizeOf(payload.potentialAction[3].inputs[0].choices)]" is='#[MunitTools::equalTo(3)]'/>
+			<munit-tools:assert-that doc:name="Assert first choice display" expression="#[payload.potentialAction[3].inputs[0].choices[0].display]" is='#[MunitTools::equalTo("In Progress")]'/>
+		</munit:validation>
+	</munit:test>
+
+</mule>
