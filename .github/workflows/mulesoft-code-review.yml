@@ -78,7 +78,7 @@ jobs:
         working-directory: buddy-reviewer
         env:
           # Repo being reviewed — GitHub injects this automatically
-          GITHUB_REPOSITORY: ${{ github.repository }}
+          GITHUB_REPOSITORY:  akii180499/integratingTeamsandSlack
           GITHUB_TOKEN:       ${{ secrets.PAT_TOKEN }}
 
           # LLM keys — the reviewer auto-detects whichever is set.
