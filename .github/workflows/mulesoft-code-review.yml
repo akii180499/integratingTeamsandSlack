@@ -59,33 +59,43 @@ jobs:
           repository: akii180499/mulesoft-buddy-reviewer   # ← change to your reviewer repo
           ref: main
           token: ${{ secrets.PAT_TOKEN }}
-          path: buddy-reviewer
+          path: mulesoft-buddy-reviewer
 
       # ── 2. Set up Python ──────────────────────────────────────────────────
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: "3.11"
-          cache: pip
-          cache-dependency-path: mulesoft-buddy-reviewer/requirements.txt
 
       # ── 3. Install dependencies ───────────────────────────────────────────
+      - name: Cache pip dependencies
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-${{ hashFiles('mulesoft-buddy-reviewer/requirements.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-pip-
+
       - name: Install dependencies
         run: pip install -r mulesoft-buddy-reviewer/requirements.txt
 
       # ── 4. Run the review ─────────────────────────────────────────────────
       - name: Run Buddy Reviewer
-        working-directory: buddy-reviewer
+        working-directory: mulesoft-buddy-reviewer
         env:
           # Repo being reviewed — GitHub injects this automatically
-          GITHUB_REPOSITORY:  akii180499/integratingTeamsandSlack
-          GITHUB_TOKEN:       ${{ secrets.PAT_TOKEN }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
+          GITHUB_TOKEN:       ${{ secrets.BUDDY_GITHUB_TOKEN }}
 
           # LLM keys — the reviewer auto-detects whichever is set.
           # Set all three if you want fallback behaviour.
           GEMINI_API_KEY:    ${{ secrets.GEMINI_API_KEY }}
           OPENAI_API_KEY:    ${{ secrets.OPENAI_API_KEY }}
           DEEPSEEK_API_KEY:  ${{ secrets.DEEPSEEK_API_KEY }}
+
+          # Optional model overrides (leave blank to use provider defaults)
+          #LLM_ANALYSIS_MODEL: ${{ vars.LLM_ANALYSIS_MODEL }}
+          #LLM_FIX_MODEL:      ${{ vars.LLM_FIX_MODEL }}
 
         run: python main.py
 
