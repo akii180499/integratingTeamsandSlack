@@ -6,16 +6,16 @@
 http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
 http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
 	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="47983b61-c2aa-4585-a177-f53b2ccc0ff2" >
-		<http:listener-connection host="0.0.0.0" port="8082" />
+		<http:listener-connection host="0.0.0.0" port="8091" />
 	</http:listener-config>
 	<flow name="teams-flow" doc:id="e561e120-6ad9-4a24-ae9b-79525b8b2b26" >
-		<http:listener doc:name="Listener" doc:id="bcbf6082-fec4-458e-924b-ada9932362d0" config-ref="HTTP_Listener_config" path="/teams"/>
+		<http:listener doc:name="Listener" doc:id="bcbf6082-fec4-458e-924b-ada9932362d0" config-ref="HTTP_Listener_config" path=""/>
 		<ee:transform doc:name="Transform Message" doc:id="72356f83-28d1-4d56-910e-f2133527c7f1" >
 			<ee:message >
 				<ee:set-payload ><![CDATA[output json
 ---
 {
-    "@type": "MessageCard",
+    "": "MessageCard",
     "@context": "http://schema.org/extensions",
     "themeColor": "0076D7",
     "summary": "Akshay Rane created a new task",
