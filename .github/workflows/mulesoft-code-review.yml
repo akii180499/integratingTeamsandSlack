@@ -84,8 +84,8 @@ jobs:
         working-directory: mulesoft-buddy-reviewer
         env:
           # Repo being reviewed — GitHub injects this automatically
-          GITHUB_REPOSITORY: ${{ github.repository }}
-          GITHUB_TOKEN:       ${{ secrets.BUDDY_GITHUB_TOKEN }}
+          GITHUB_REPOSITORY: akii180499/mulesoft-buddy-reviewer
+          GITHUB_TOKEN:       ${{ secrets.PAT_TOKEN }}
 
           # LLM keys — the reviewer auto-detects whichever is set.
           # Set all three if you want fallback behaviour.
