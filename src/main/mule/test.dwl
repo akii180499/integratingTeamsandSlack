@@ -10,4 +10,4 @@
 output application/json
 var x=(payload.placedDate splitBy(' '))[0]
 ---
-x as Date {format: "yyyy-MM-dd"}
+x as Date 
