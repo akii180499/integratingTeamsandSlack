@@ -86,6 +86,7 @@ jobs:
           # Repo being reviewed — GitHub injects this automatically
           GITHUB_REPOSITORY: akii180499/mulesoft-buddy-reviewer
           GITHUB_TOKEN:       ${{ secrets.PAT_TOKEN }}
+          PR_NUMBER:          ${{ github.event.pull_request.number }}
 
           # LLM keys — the reviewer auto-detects whichever is set.
           # Set all three if you want fallback behaviour.
