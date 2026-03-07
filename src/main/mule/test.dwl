@@ -29,6 +29,13 @@ Dataweave Code:-
 
 %dw 2.0
 output application/json
-fun Keys(value: Any, keys = [])
+fun Keys(value: Any, keys = []): Array<String> | Null = do {
+ flatten([keys, 
+ typeOf(value) as String match {
+ case "Object" -> keysOf(value) reduce (v0, a0 = flatten([keys, keysOf(value)])) -> flatten([a0, Keys(value[v0], keys)])
+ case "Array" -> 
+ else -> []
+ }])
+}
  - -
-sdkasnd1243
+Keys(payload)
