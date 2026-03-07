@@ -1,13 +1,34 @@
-//Input:-
+Extract Keys from Nested Objects & Array
 
-//<placedDate>2022-05-25 00:00:00.0</placedDate>
-//Output:-
+// Input:-
 
-//"05/25/2022"
-//Dataweave Code:-
+// [{
+//  "key1": 1,
+//  "key2": 2,
+//  "key3": [{
+//    "Key4": {
+//     "key5": 5
+//    }
+//   },
+//   {
+//    "key6": 6
+//   }
+//  ]
+// }]
+// Output:-
+
+// [
+//  "key1",
+//  "key2",
+//  "key3",
+//  "Key4",
+//  "key5",
+//  "key6"
+// ]
+Dataweave Code:-
 
 %dw 2.0
 output application/json
-var x=(payload.placedDate splitBy(' '))[0]
----
-x as Date 
+fun Keys(value: Any, keys = [])
+ - -
+Keys(payload)
