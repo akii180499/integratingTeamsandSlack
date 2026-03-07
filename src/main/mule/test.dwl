@@ -31,4 +31,3 @@ Dataweave Code:-
 output application/json
 fun Keys(value: Any, keys = [])
  - -
-Keys(payload)
