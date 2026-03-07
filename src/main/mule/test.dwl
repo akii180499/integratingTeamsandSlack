@@ -1,5 +1,13 @@
+//Input:-
+
+//<placedDate>2022-05-25 00:00:00.0</placedDate>
+//Output:-
+
+//"05/25/2022"
+//Dataweave Code:-
+
 %dw 2.0
 output application/json
-import divideBy from dw::core::Util
- - -
-payload divideBy 2
+var x=(payload.placedDate splitBy(' '))[0]
+---
+x as Date {format: "yyyy-MM-dd"}
