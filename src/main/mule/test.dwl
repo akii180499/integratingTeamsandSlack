@@ -1,41 +1,16 @@
-Extract Keys from Nested Objects & Array
-
-// Input:-
-
-// [{
-//  "key1": 1,
-//  "key2": 2,
-//  "key3": [{
-//    "Key4": {
-//     "key5": 5
-//    }
-//   },
-//   {
-//    "key6": 6
-//   }
-//  ]
-// }]
-// Output:-
-
+// Input
 // [
-//  "key1",
-//  "key2",
-//  "key3",
-//  "Key4",
-//  "key5",
-//  "key6"
+//   {"name": "Ravi", "accountNumber": "1234567890"},
+//   {"name": "Sneha", "accountNumber": "9876543210"}
 // ]
-Dataweave Code:-
+
+// Output:
+// [
+//   {"name": "Ravi", "accountNumber": "****7890"},
+//   {"name": "Sneha", "accountNumber": "****3210"}
+// ]
 
 %dw 2.0
 output application/json
-fun Keys(value: Any, keys = []): Array<String> | Null = do {
- flatten([keys, 
- typeOf(value) as String match {
- case "Object" -> keysOf(value) reduce (v0, a0 = flatten([keys, keysOf(value)])) -> flatten([a0, Keys(value[v0], keys)])
- case "Array" -> 
- else -> []
- }])
-}
- - -
-Keys(payload)
+---
+payload map (item) -> item
