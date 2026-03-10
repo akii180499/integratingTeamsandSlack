@@ -13,4 +13,11 @@
 %dw 2.0
 output application/json
 ---
-payload map (item) -> item
+%dw 2.0
+import * from dw::util::Values
+output application/json
+---
+payload map (item) -> {
+  item.name,
+  accountNumber: mask(item.accountNumber, "*", 4)
+}
