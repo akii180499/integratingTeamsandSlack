@@ -36,7 +36,7 @@ http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/
         "markdown": true
     }],
     "potentialAction": [{
-        "": "ActionCard",
+"@type": "ActionCard",
         "name": "Add a comment",
         "inputs": [{
             "@type": "TextInput",
