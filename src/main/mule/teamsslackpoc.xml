@@ -9,7 +9,7 @@ http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/
 		<http:listener-connection host="0.0.0.0" port="8082" />
 	</http:listener-config>
 	<flow name="teams-flow" doc:id="e561e120-6ad9-4a24-ae9b-79525b8b2b26" >
-		<http:listener doc:name="Listener" doc:id="bcbf6082-fec4-458e-924b-ada9932362d0" config-ref="HTTP_Listener_config" path="/teams"/>
+		<http:listener doc:name="Listener" doc:id="bcbf6082-fec4-458e-924b-ada9932362d0" config-ref="" path="/teams"/>
 		<ee:transform doc:name="Transform Message" doc:id="72356f83-28d1-4d56-910e-f2133527c7f1" >
 			<ee:message >
 				<ee:set-payload ><![CDATA[output json
