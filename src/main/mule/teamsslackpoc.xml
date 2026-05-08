@@ -19,25 +19,7 @@ http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/
     "@context": "http://schema.org/extensions",
     "themeColor": "0076D7",
     "summary": "Akshay Rane created a new task",
-    "sections": [{
-        "activityTitle": "Akshay Rane created a new task",
-        "activitySubtitle": "On Project Tango",
-        "activityImage": "https://adaptivecards.io/content/cats/3.png",
-        "facts": [{
-            "name": "Assigned to",
-            "value": "Unassigned"
-        }, {
-            "name": "Due date",
-            "value": "Mon May 01 2017 17:07:18 GMT-0700 (Pacific Daylight Time)"
-        }, {
-            "name": "Status",
-            "value": "Not started"
-        }],
-        "markdown": true
-    }],
-    "potentialAction": [{
-        "@type": "ActionCard",
-        "name": "Add a comment",
+    "sections": [omment",
         "inputs": [{
             "@type": "TextInput",
             "id": "comment",
@@ -64,7 +46,7 @@ http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/
         }]
     }, {
         "@type": "OpenUri",
-        "name": "Learn More",
+        "name": "Le",
         "targets": [{
             "os": "default",
             "uri": "https://learn.microsoft.com/outlook/actionable-messages"
@@ -91,13 +73,13 @@ http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/
         "actions": [{
             "@type": "HttpPOST",
             "name": "Save",
-            "target": "https://learn.microsoft.com/outlook/actionable-messages"
+            "target": "PHI NO : 123450"
         }]
     }]
 }]]></ee:set-payload>
 			</ee:message>
 		</ee:transform>
-		<http:request method="POST" doc:name="Request" doc:id="43d3c068-1e6e-4ec6-8270-03c93f8c2a6a" url='#["Enter your webhook url for teams. Steps to generate the webook url are mentioned inside blog provided in the readme file"]'/>
+		<http:request method="POST" doc:name="Request" doc:id="43d3c068-1e6e-4ec6-8270-03c93f8c2a6a" url='"'/>
 	</flow>
 	<flow name="slack-flow" doc:id="daf2e6ab-e448-41b5-b7f7-c22330d76aa4">
 		<http:listener doc:name="Listener" doc:id="03422a83-f295-4238-a9f7-68920844243a" config-ref="HTTP_Listener_config" path="/slack" />
